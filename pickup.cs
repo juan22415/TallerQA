@@ -6,158 +6,92 @@ using System.Collections.Generic;
 
 public class pickup : MonoBehaviour
 {
-  
-    public Text tiempo;
- 
-    public float time;
-    public int minutos;
-    public bool levelComplete;
-    public string highscorePos;
+    private Text timedisplayed;
+    private float ingametime;
+    private int minutes;
+    private bool isLevelcomplete;
+    private int pickedupitmes = 0;
+    private AudioClip pickItemsound;
+    private AudioClip spotsound;
+    private AudioSource audiosource;
+    private GameObject puerta;
+    private RawImage alma;
+    private RawImage corazon;
+    private RawImage retrato;
+    private RawImage oso;
+    private RawImage flor;
 
-
-
-
-    public int temp;
-
-    public int pickedup=0;
-    public AudioClip tp;
-    public AudioClip cp;
-    public AudioSource source;
-    public GameObject puerta;
-    
-
-    public RawImage alma;
-    public RawImage corazon;
-    public RawImage retrato;
-    public RawImage oso;
-    public RawImage flor;
-
-    // Use this for initialization
     void Start()
     {
-       source = GetComponent<AudioSource>();
-
-        time = 0;
-        temp = 0;
-     
-        tiempo.text = "Tiempo:00:00" + time;
+        source = GetComponent<AudioSource>();
+        ingametime = 0;
+        timedisplayed.text = "Tiempo:00:00" + ingametime;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        time = time + Time.deltaTime;
-     
-        tiempo.text = "Tiempo:00:" + Mathf.RoundToInt(time);
-        if (time == 60)
+        ingametime = ingametime + Time.deltaTime;
+        timedisplayed.text = "Tiempo:00:" + Mathf.RoundToInt(ingametime);
+        if (ingametime == 60)
         {
-            minutos = 1;
-            time = 0;
-         
+            minutes = 1;
+            ingametime = 0;
         }
+    }
 
-        if (pickedup==5)
+    void OnTriggerEnter2D(Collider2D collindingobject)
+    {
+        if (collindingobject.gameObject.tag == "ganar")
+        {
+            SceneManager.LoadScene(5);
+        }
+        if (collindingobject.gameObject.tag == "Spot")
+        {
+            source.PlayOneShot(spotsound);
+        }
+        if (collindingobject.gameObject.tag == "alma")
+        {
+            Destroy(collindingobject.gameObject);
+            ScoreManager.Instance.Score += 100;
+            pickedupitmes++;
+            alma.enabled = false;
+            source.PlayOneShot(pickItemsound);
+        }
+        if (collindingobject.gameObject.tag == "corazon")
+        {
+            Destroy(collindingobject.gameObject);
+            Collectitem(corazon);
+        }
+        if (collindingobject.gameObject.tag == "oso")
+        {
+            Destroy(collindingobject.gameObject);
+            Collectitem(oso);
+        }
+        if (collindingobject.gameObject.tag == "retrato")
+        {
+            Destroy(collindingobject.gameObject);
+            Collectitem(retrato);
+        }
+        if (collindingobject.gameObject.tag == "flor")
+        {
+            Destroy(collindingobject.gameObject);
+            Collectitem(flor);
+        }
+    }
+
+    public void Collectitem(RawImage itemtodisable)
+    {
+        setscore(1);
+        ScoreManager.Instance.Score += 100;
+        itemtodisable.enabled = false;
+        audiosource.PlayOneShot(pickItemsound);
+    }
+    public void setscore(int addedscore)
+    {
+        pickedupitmes += addedscore;
+        if (pickedupitmes < 4)
         {
             Destroy(puerta);
         }
     }
-
-
-
-    
-    void OnTriggerEnter2D(Collider2D dmg)
-    {
-
-        if (dmg.gameObject.tag == "ganar")
-
-
-        {
-            SceneManager.LoadScene(5);
-        }
-
-            if (dmg.gameObject.tag == "Spot")
-        {
-
-
-            source.PlayOneShot(cp);
-
-        }
-
-
-    
-
-    
-        if (dmg.gameObject.tag == "alma")
-        {
-            Destroy(dmg.gameObject);
-
-            ScoreManager.Instance.Score += 100;
-
-            pickedup++;
-          
-
-            alma.enabled = false;
-
-            source.PlayOneShot(tp);
-
-
-
-
-
-        }
-
-        if (dmg.gameObject.tag == "corazon")
-        {
-            Destroy(dmg.gameObject);
-
-            pickedup++;
-
-            ScoreManager.Instance.Score += 100;
-            corazon.enabled = false;
-            source.PlayOneShot(tp);
-
-
-        }
-        if (dmg.gameObject.tag == "oso")
-        {
-            Destroy(dmg.gameObject);
-
-            pickedup++;
-
-            ScoreManager.Instance.Score += 100;
-            oso.enabled = false;
-
-            source.PlayOneShot(tp);
-
-        }
-        if (dmg.gameObject.tag == "retrato")
-        {
-            Destroy(dmg.gameObject);
-            ScoreManager.Instance.Score += 100;
-            pickedup++;
-         
-
-            retrato.enabled = false;
-            source.PlayOneShot(tp);
-
-
-        }
-        if (dmg.gameObject.tag == "flor")
-        {
-            Destroy(dmg.gameObject);
-
-            pickedup++;
-
-            ScoreManager.Instance.Score += 100;
-            flor.enabled = false;
-            source.PlayOneShot(tp);
-
-
-        }
-
-       
-
-    }
-   
 }
-
